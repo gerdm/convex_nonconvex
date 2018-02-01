@@ -1,4 +1,5 @@
 # Convexity v.s. Non-Convexity Problems
+[![DOI](https://zenodo.org/badge/119768373.svg)](https://zenodo.org/badge/latestdoi/119768373)
 
 This is a brief essay about convexity in machine learning problems. It presents a quick overview of what exactly is a convex problem and a practical comparisson between two models in machine learning to contrast convex v.s. non-convex problems.
 
