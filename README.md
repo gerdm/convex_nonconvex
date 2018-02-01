@@ -5,3 +5,6 @@ This is a brief essay about convexity in machine learning problems. It presents 
 The comparisson mentioned above makes use of the $L_2$ loss function considering a linear regression model, and a deep neural network with one hidden layer, sigmoid activation function and linear output.
 
 This repository contains the code used to make the graphs presented as Jupyter notebooks.
+
+![Neural Network Loss Surface](./images/nnet_loss.png)
+

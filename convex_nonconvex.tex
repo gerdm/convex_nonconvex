@@ -9,6 +9,10 @@
 \usepackage{amsthm} % For proofs
 \usepackage{tikz} % images
 
+\usepackage{caption} % To make fonts on figure smallerx
+\captionsetup[figure]{font=small}
+
+
 \newtheorem{definition}{Definition}
 \newcommand{\rnums}{\mathbb{R}}
 
@@ -17,22 +21,15 @@
 \begin{document}
 	\maketitle
 	
-	All throughout science, the search for an optimal solution is often presented as an approximation of reality. Be it to fit a curve for a given set of points that make an interest rate curve in quantitative finance; to find the optimal path in operations research; or the study of equilibrium under an economic model, to say a few. Solving these problems lead to the understanding of reality and optimal decision taking given the information available.\\
+	All throughout science, the search for an optimal solution is often presented as an approximation of reality. Be it to fit a curve for a given set of points that make an interest rate curve; to find the optimal path in operations research; or the study of equilibrium under an economic model. Solving these problems lead to an optimal decision given the information available. Interestingly enough, how these problems are solved are as important as the problems themselves. We categorize the resolution for these problems based on their mathematical structure.\\
 	
-	Interestingly enough, how these problems are solved are as important as the problems themselves, the same algorithm might yield a different representation depending on the \textit{structure} of the problem. This structure becomes essential in high-dimensional spaces, where there is no clear graphical representation of the problem at stake.\\
+	In this essay, which I declare is my own personal work, we will discuss about the structural properties of these problems in the context of machine learning, whose \textit{problem} is to make sense of the information available and generalize what has been \textit{learned} to a unseen (out of training) dataset. \textit{Learning}, in this sense, is the ability to extract information from data.\\
 	
-	In this essay, which I declare is my own personal work, we will discuss about this structural property in the context of machine learning: a subject whose foundation lies in solving a collection of problems coming from both spectrums.\\
+	In parametric regression problems, for example, the main goal is to find a set of $k$ parameters $\{\theta_i\}_{i=1}^k$ to a function $g:\rnums^n\to\rnums^m$ that best approximates an input vector $X\in\rnums^n$ to an output vector $y\in\rnums^m$. In this sense, we would like to find $\theta$ such that $g(X\ | \ \{\theta_i\}_{i=1}^k) \approx y$. To determine how significant the approximation to $y$ is given  $\{\theta_i\}_{i=1}^k$, we introduce the loss function $J: \rnums^m \to \rnums$ whose goal is to measure the difference between the model and the observed points; the smaller $J$, the better the approximation. The search for an optimal solution to to $J$ is regarded as an optimization problem.\\
 	
-	 The \textit{problem} in machine learning is to make sense of the information available and generalize what has been \textit{learned} to a unseen (out of training) dataset. \textit{Learning}, in this sense, is the ability to extract information from data.\\
-	
-	To solve the learning problem, we need a way to quantify how much information the model was able to attain during its training phase. In parametric regression problems, for example, the main goal is to find a set of parameters $\theta$ to a function $g:\rnums^n\to\rnums^m$ that best approximates an input vector $X\in\rnums^n$ to an output vector $y\in\rnums^m$. In this sense, we would like to find $\theta$ such that $g(X|\theta) \approx y$. To determine how significant the approximation to $y$ given $\theta$ is, we introduce the loss function $J: \rnums^m \to \rnums$ whose goal is to measure the difference between the model and the observed points; the smaller $J$ is, the better the approximation. The search for an optimal solution to to $J$ is regarded as an optimization problem, and its solution, $\theta^*$, is such that	
-	\begin{equation}\label{eq:opt_solution}
-		\theta^* = \text{argmin}_\theta  J(\theta).
-	\end{equation}
-	
-	If the parameter $\theta^*$ is such that for every other $\theta$, $J(\theta^*) \leq J(\theta)$, then we say that $\theta^*$ is a global minimum. If, on the other hand, $\theta^*$ is such that $J(\theta^*) \leq J(\theta)$ for every $\theta \in$ $\{\hat\theta \ | \  ||\hat\theta - \theta^*|| < \epsilon\}$ with $\epsilon > 0$, we say that $\theta^*$ is a local minimum. It is then, that to find the global minimum in $J$ is to find the value that guarantees the optimal solution for the problem in question (see eq. \ref{eq:opt_solution}) . How, then, can one guarantee to have found a global minimum or even assert its existence? A crucial consideration is to know whether the problem is \textbf{convex or non-convex}.\\
+	For a problem with a single vector parameter, if $\theta^*$ is such that for every other $\theta$, $J(\theta^*) \leq J(\theta)$, we regard $\theta^*$ as a global minimum. If, on the other hand, $\theta^*$ is such that $J(\theta^*) \leq J(\theta)$ for every $\theta \in$ $\{\hat\theta \ | \  ||\hat\theta - \theta^*|| < \epsilon\}$ with $\epsilon > 0$, we say that $\theta^*$ is a local minimum. It is then, that to find the global minimum in $J$ is to find the value that guarantees the optimal solution for the problem in question. How, then, can one guarantee to have found a global minimum or even assert its existence? A crucial consideration is to know whether the problem is \textbf{convex or non-convex}.\\
 		
-	On a superficial level, we regard a convex functions as smooth and \textit{well behaved}. To understand this, consider the following definition:
+	On a superficial level, we regard a convex problem as smooth and \textit{well behaved}. Consider the following definition:
 	
 	\begin{definition}[Convex Function]
 		A function $f:\rnums^n \to \rnums$ is said to be convex if the domain of $f$ is convex and, if for every $x_1$, $x_2$ $\in D_{f}$, $\alpha \in [0, 1]$,
@@ -41,7 +38,9 @@
 		\end{equation}
 	\end{definition}
 	
-	For a function $f: \rnums \to \rnums$, the definition of a convex function is akin to a line passing from $f(x_1)$ to $f(x_2)$ that is above or at the same level as the image of $f$ between $x_1$ and $x_2$. This last fact guarantees the existence of a global minimum (see \cite{boyd}) . In light of the former, it might seem desirable to work with convex problems and, in some cases, transform the optimization problem as that in which the function to minimize is convex. In fact, this was the case for many years, so much so that extensive books exist on the matter, whose analysis and resolutions are still relevant. As problems grew complex, \cite{Jain-Kar} points, researchers looked for ways to transform seaming non-convex problems into convex. Even though said transformations were made possible, research has shown that solving the non-convex form for some of these problem offer more scalable solutions.\\
+	For $f: \rnums \to \rnums$, a convex function is akin to a line passing from $f(x_1)$ to $f(x_2)$ that is above or at the same level as the image of $f$ between $x_1$ and $x_2$ The former guarantees the existence of a global minimum (see \cite{boyd}).\\
+	
+	In light of this property, it might seem desirable to work with convex problems and, in some cases, transform the optimization problem as that in which the function to minimize is convex. In fact, this was the case for many years, so much so that extensive books exist on the matter, whose analysis and resolutions are still relevant. Research has shown \cite{Jain-Kar}, that in some cases, even though transformations of the problem were made possible, solving the non-convex form for some of these problem offer more scalable solutions.\\
 	
 	\begin{figure}
 		\centering
@@ -50,9 +49,9 @@
 		\label{fig:conv_nonconvr2}
 	\end{figure}
 		
-	To understand the phenomenon of convexity in machine learning, let us consider a toy example contrasting two key models, that of linear regression and single hidden-layer neural network with sigmoid activation function and a linear output. We consider the training dataset $X\in\rnums^{m\times n}$, $y\in\rnums^{1\times n}$ with $n$ training points and $m$ input parameters, where $\{X_{i,j}\}_{i,j}$, $\{y_{i,j}\}_{i,j} \sim N(0,1)$ and $L_2$ loss function $J(\cdot) = \frac{1}{2} ||g(X|\cdot) - y||_2$.\\
+	To deepen our understanding of convexity in machine learning, let us consider a toy example contrasting two key models, that of linear regression and single hidden-layer neural network. Consider the training dataset $X\in\rnums^{m\times n}$, $y\in\rnums^{1\times n}$ with $n$ training points and $m$ input parameters, where $\{X_{i,j}\}_{i,j}$, $\{y_{i,j}\}_{i,j} \sim N(0,1)$ and $L_2$ loss function $J(\cdot) = \frac{1}{2} ||g(X|\cdot) - y||_2$.\\
 		
-	For the linear regression model we assume existence of a linear relationship between $X$ and $y$. The aim is to find $\theta\in\rnums^{m}$ that models $g(X|\theta) = \theta^T X$ and minimizes $J$. Under this setting, $J$ is a convex function of $\theta$. To show this, we must prove that $J(\alpha \theta_1 + (1 - \alpha)\theta_2) \leq \alpha J(\theta_1) + (1 - \alpha)J(\theta_2)$, $\forall \  \theta_1, \theta_2 \in \rnums^{m}$, $\alpha \in [0,1]$.
+	For the linear regression, we assume existence of a linear relationship between $X$ and $y$. The aim is to find $\theta\in\rnums^{m}$ that models $g(X|\theta) = \theta^T X$ and minimizes $J$. Under this setting, $J$ is a convex function of $\theta$ (see Figure \ref{fig:convex_loss}).
 	
 	\begin{proof}
 	\begin{align*}
@@ -71,16 +70,11 @@
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.7\textwidth]{lreg_loss}
-		\caption{Linear regression loss surface.}
+		\caption{Linear regression loss surface. The image of $J$, as a function of $\theta$, is an $m + 1$ dimensional bowl-like surface. Here, we represent the surface $J$ considering the third and fourth parameters in a linear regression with $n=1000$ and $m=10$.}
 		\label{fig:convex_loss}
 	\end{figure}
 	
-	
-	Graphically, this implies that the image for $J$, as a function of $\theta$, is an $m + 1$ dimensional bowl-like surface. Figure \ref{fig:convex_loss} shows the loss surface $J$ considering the third and fourth parameters in a linear regression with $n=1000$ and $m=10$.\\
-	
-	Let us now analyze the loss function for a neural network architecture. As stated by \cite{vidal-et-al}, the rise in neural network research and application has been largely due the availability of massive datasets, and efficient GPU computing hardware. Many of the mathematical reasons behind deep neural networks remain a mystery, yet this has not stop the application and engineering efforts to come up with evermore clever and complex ways to develop these architectures.\\
-	
-	Deep neural networks are non-convex in nature. To graphically analyze this property, let us now consider the neural network architecture proposed above. The output for this neural network is $g(X|W^{[1]}, W^{[2]}) = W^{[2]}\sigma\left(W^{[1]} X\right)$, where $\sigma(x) = 1 / (1 + e^{-x})$ is applied element-wise. Consider $W^{[1]} \in \rnums^{4\times 10}$, $W^{[2]} \in \rnums^{1\times 4}$ initialized randomly as gaussian noise, the grid shown in figure \ref{fig:nonconvex_loss} represents the surface of $J$ as a function of two parameters, leaving the rest constant. Under this setting, the surface is non-smooth, contrary to the loss surface seen in the linear model.\\
+	Let us now analyze the loss function of a neural network architecture. These, powerful as they can be, are non-convex in nature and many of the mathematical reasons behind their success remain elusive \cite{vidal-et-al}. We consider a neural network architecture with sigmoid activation function and linear output given by $g(X|W^{[1]}, W^{[2]}) = W^{[2]}\sigma\left(W^{[1]} X\right)$, with $\sigma(x) = 1 / (1 + e^{-x})$ applied element-wise. Consider $W^{[1]} \in \rnums^{4\times 10}$, $W^{[2]} \in \rnums^{1\times 4}$ initialized randomly as gaussian noise, the grid shown in figure \ref{fig:nonconvex_loss} represents the surface of $J$ as a function of two parameters. Under this setting, the surface is rough and uneven.\footnote{Note that $J$ alone is a convex function. On the other hand, $J$, as a function of the parameters that conform a neural network architecture make it non-convex.}.\\
 		
 	\begin{figure}[h!]
 		\centering
@@ -90,24 +84,24 @@
 	\end{figure}
 	
 	
-	As we can see, knowing the structure of the problem, being convex or non-convex, hints at at the sort of problems, or advantages, one might encounter in solving it. For some convex problems, as  the linear regression with $m < n$, there exists a closed form solution that yields the global minimum. Some problems nowadays, however, have too much data to fit into memory and solve in closed form solution, or the algorithms to solve them have no closed form solution. In machine learning and neural networks, gradient descent and its variation like ADAM, RMSProp or Mini-batch Gradient Descent are the current algorithms of choice to approximate a local minimum.\\
+	As we can see, the structure of the problem hints at at the sort of problems, or advantages, one might encounter. Given the vast amount of data available to fit into memory and the complexity of current models, the most common approach is to make use of iterative algorithms.\\
 	
-	At the spirit of this powerful algorithm lies a rather intuitive and simple to implement idea. Given a loss function $J$, and a vector $\theta$ of parameters, the idea is to gradually reach a local minimum by computing the gradient of the loss function with respect to every parameter in the model and decrease at a rate $\alpha$ to the direction of steepest descent.  
+	In machine learning and neural networks, gradient descent and its variations like ADAM, RMSProp or Mini-batch Gradient Descent are the current algorithms of choice to approximate a local minimum. At the spirit of this powerful algorithm lies a rather intuitive and simple to implement idea. Given a loss function $J$, and a vector $\theta$ of parameters, the idea is to gradually reach local minimum by computing the gradient of the loss function with respect to every parameter in the model and decrease at a rate $\alpha$ to the direction of steepest descent.
 	\begin{equation}
 		\theta_i :=\theta_i - \alpha \frac{\partial}{\partial \theta_i} J(\theta) \ \forall \ i \in \{1 \ldots, m\},
 	\end{equation}
 	
-	Gradient descent can be applied to both convex and non-convex problems, although knowing that $J$ is a convex function of $\theta$ guarantees, as we have seen, to reach a global minimum. The downside of gradient descent and its variations are the selection of the hyperparameters and, for non-convex problems, we can only guarantee local convergence.\\
+	Gradient descent can be applied to both convex and non-convex problems, although knowing that $J$ is a convex function of $\theta$ guarantees, as we have seen, to reach a global minimum. The downside of gradient descent are the selection of the \textit{hyperparameters} (see Figure \ref{fig:graddesc}) and, for non-convex problems, we can only guarantee local convergence.\\
 	
-	The growing research in non-nonvex problems, the quintessential example in machine learning being neural networks, brings about a whole new area of research to further expand our understanding in the subject. Significant proposals, such as the one made by Geoffrey Hinton \cite{levine}, invite to even redesign the current most important algorithm to learn neural network parameters: backpropagation. \\
+	The growing research in non-nonvex problems, the quintessential example in machine learning being neural networks, brings about a whole new area of research to further expand our understanding. Significant proposals, such as the one made by Geoffrey Hinton \cite{levine}, invite to even redesign the current most important algorithm to learn neural network parameters: backpropagation.\\
 	
-	The consequences from understanding these problems, although theoretical, bear important presence in applied settings as well. In the age of big data, a vast amount of information is useless without the power to abstract knowledge.
+	The consequences from understanding these problems, although theoretical, bear important presence in applied settings as well. In the age of big data and evermore complex models, a vast amount of information is useless without the correct tools to abstract knowledge. 
 	
 	
 	\begin{figure}
 		\centering
 		\includegraphics[width=0.8\textwidth]{graddesc}
-		\caption{Gradient Descent Hyperparameter selection. We consider the function $f(x) = x^2$ to test the effects of gradient descent. \textit{Left}: The learning rate is to big and the gradient shoots upwards. \textit{Right}: The learning rate is to small, convergence will take a considerable amount of iterations before reaching the minimum.}
+		\caption{Gradient Descent Hyperparameter Selection. We consider the function $f(x) = x^2$ to test the effects of gradient descent. \textit{Left}: The learning rate is too big and the gradient shoots upwards. \textit{Right}: The learning rate is to small, convergence will take a considerable amount of iterations before reaching global minimum.}
 		\label{fig:graddesc}
 	\end{figure}
 	
